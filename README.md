@@ -12,6 +12,7 @@ The countdown has a fixed date 2020-12-24T00:00:00, it would be a good idea to m
 - Copywriting: use words instead of numbers when the number is less than 10
 - Improvement of UX / UI
 - Delete comma after Countdown component
+- There is no need to pass the date from App.js to Countdown.jsx
 
 * Pick an area of improvement to implement.
 - Usage of modern libraries: hooks and date-fns
