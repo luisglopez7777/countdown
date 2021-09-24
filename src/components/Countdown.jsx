@@ -24,15 +24,15 @@ const Countdown = () => {
           start: today,
           end: birthdayThisYear
         })
-        console.log('result primer if', result)
         setAnswer(result)
+
       } else {
         const result = intervalToDuration({
           start: today,
           end: birthdayNextYear
         })
-        console.log('segundo result', result)
         setAnswer(result)
+
       }
 
     }, 1000);
