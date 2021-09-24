@@ -1,102 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'
+import intervalToDuration from 'date-fns/intervalToDuration'
+import differenceInDays from 'date-fns/differenceInDays'
 
-class Countdown extends React.Component {
-  constructor(props) {
-    super(props);
+const Countdown = () => {
 
-    this.state = {
-      days: 0,
-      hours: 0,
-      min: 0,
-      sec: 0,
-    }
-  }
+  const thisYear = new Date().getFullYear()
+  const birthdayThisYear = new Date(thisYear, 11, 24, 0, 0)
+  const birthdayNextYear = new Date(thisYear + 1, 11, 24, 0, 0)
 
-  componentDidMount() {
-    // update every second
-    this.interval = setInterval(() => {
-      const date = this.calculateCountdown(this.props.date);
-      date ? this.setState(date) : this.stop();
+  const [answer, setAnswer] = useState({})
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const today = new Date()
+
+      const daysDifference = differenceInDays(
+        today,
+        birthdayThisYear
+      )
+
+      if (daysDifference <= 0) {
+        const result = intervalToDuration({
+          start: today,
+          end: birthdayThisYear
+        })
+        console.log('result primer if', result)
+        setAnswer(result)
+      } else {
+        const result = intervalToDuration({
+          start: today,
+          end: birthdayNextYear
+        })
+        console.log('segundo result', result)
+        setAnswer(result)
+      }
+
     }, 1000);
-  }
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  componentWillUnmount() {
-    this.stop();
-  }
-
-  calculateCountdown(endDate) {
-    let diff = (Date.parse(new Date(endDate)) - Date.parse(new Date())) / 1000;
-
-    const timeLeft = {
-      years: 0,
-      days: 0,
-      hours: 0,
-      min: 0,
-      sec: 0,
-      millisec: 0,
-    };
-
-    // calculate time difference between now and expected date
-    if (diff >= (365.25 * 86400)) { // 365.25 * 24 * 60 * 60
-      timeLeft.years = Math.floor(diff / (365.25 * 86400));
-      diff -= timeLeft.years * 365.25 * 86400;
-    }
-    if (diff >= 86400) { // 24 * 60 * 60
-      timeLeft.days = Math.floor(diff / 86400);
-      diff -= timeLeft.days * 86400;
-    }
-    if (diff >= 3600) { // 60 * 60
-      timeLeft.hours = Math.floor(diff / 3600);
-      diff -= timeLeft.hours * 3600;
-    }
-    if (diff >= 60) {
-      timeLeft.min = Math.floor(diff / 60);
-      diff -= timeLeft.min * 60;
-    }
-    timeLeft.sec = diff;
-
-    return timeLeft;
-  }
-
-  stop() {
-    clearInterval(this.interval);
-  }
-
-  addLeadingZeros(value) {
-    value = String(value);
-    while (value.length < 2) {
-      value = '0' + value;
-    }
-    return value;
-  }
-
-  render() {
-    const countDown = this.state;
-
-    return (
-      <div className="Countdown">
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.days)}</strong>
-          <span>{countDown.days === 1 ? 'Day' : 'Days'}</span>
-        </span>
-
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.hours)}</strong>
-          <span>Hours</span>
-        </span>
-
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.min)}</strong>
-          <span>Min</span>
-        </span>
-
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.sec)}</strong>
-          <span>Sec</span>
-        </span>
-      </div>
-    );
-  }
+  return (
+    <main>
+      {Object.keys(answer).length === 0 && answer.constructor === Object
+        ?
+        <p>Loading...</p>
+        :
+        answer.days === 0 && answer.months === 0
+          ?
+          <p>Happy birthday Eric!</p>
+          :
+          <p>{answer.months} months, {answer.days} days, {answer.minutes} minutes, {answer.seconds} seconds</p>
+      }
+    </main>
+  )
 }
 
-export default Countdown;
+export default Countdown
